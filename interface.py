@@ -53,12 +53,10 @@ def Histogram_():
     # check if color
     R, G, B = img_np[:, :, 0], img_np[:, :, 1], img_np[:, :, 2]
     if operator.eq(R.tolist(), G.tolist()) and operator.eq(G.tolist(), B.tolist()):
-        # print('This is a gray image')
         img_np = R
         new_im_np = Histogram_gray(img_np)
         new_im = Image.fromarray(new_im_np.astype('uint8')).convert('L')
     else:
-        # print('This is a color image')
         _, new_im_np, _ = Histogram_Color(img_np)
         new_im = Image.fromarray(new_im_np.astype('uint8')).convert('RGB')
 
@@ -118,12 +116,10 @@ def FFT_():
     # check if color
     R, G, B = img_np[:, :, 0], img_np[:, :, 1], img_np[:, :, 2]
     if operator.eq(R.tolist(), G.tolist()) and operator.eq(G.tolist(), B.tolist()):
-        # print('This is a gray image')
         img_np = R
         _, img_fft = image_fft(img_np)
         new_im = Image.fromarray(img_fft.astype('uint8')).convert('L')
     else:
-        # print('This is a color image')
         _, img_fft = image_fft(img_np)
         new_im = Image.fromarray(img_fft.astype('uint8')).convert('RGB')
 
@@ -142,13 +138,11 @@ def IFFT_():
     ## check if color
     R, G, B = img_np[:, :, 0], img_np[:, :, 1], img_np[:, :, 2]
     if operator.eq(R.tolist(), G.tolist()) and operator.eq(G.tolist(), B.tolist()):
-        # print('This is a gray image')
         img_np = R
         img_fft_complex, img_fft = image_fft(img_np)
         img_ifft = image_fft_inverse(img_fft_complex)
         new_im = Image.fromarray(img_ifft)
     else:
-        # print('This is a color image')
         img_fft_complex, img_fft = image_fft(img_np)
         img_ifft = image_fft_inverse(img_fft_complex)
         new_im = Image.fromarray(img_ifft.astype('uint8')).convert('RGB')
@@ -169,14 +163,13 @@ def DCT_():
     # check if color
     R, G, B = img_np[:, :, 0], img_np[:, :, 1], img_np[:, :, 2]
     if operator.eq(R.tolist(), G.tolist()) and operator.eq(G.tolist(), B.tolist()):
-        # print('This is a gray image')
         img_np = R
         img_new_dct, _ = DCT(img_np)
         new_im = Image.fromarray(img_new_dct.astype('uint8')).convert('L')
     else:
-        # print('This is a color image')
         img_new_dct, _ = DCT(img_np)
         new_im = Image.fromarray(img_new_dct.astype('uint8')).convert('RGB')
+
 
     render = ImageTk.PhotoImage(new_im)
     global img2
@@ -194,16 +187,13 @@ def IDCT_():
     # check if color
     R, G, B = img_np[:, :, 0], img_np[:, :, 1], img_np[:, :, 2]
     if operator.eq(R.tolist(), G.tolist()) and operator.eq(G.tolist(), B.tolist()):
-        # print('This is a gray image')
         img_np = R
         _, img_new_rec = DCT(img_np)
         new_im = Image.fromarray(img_new_rec.astype('uint8')).convert('L')
     else:
-        # print('This is a color image')
         _, img_new_rec = DCT(img_np)
-        print('img_new_rec', img_new_rec.shape)
         new_im = Image.fromarray(img_new_rec.astype('uint8')).convert('RGB')
-        cv2.imwrite('dct_test.png', img_new_rec)
+
 
     render = ImageTk.PhotoImage(new_im)
     global img2

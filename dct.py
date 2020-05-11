@@ -1,6 +1,7 @@
 import cv2
 import numpy as np
 import os
+import operator
 
 def DCT_sub(sub_img):
     C_temp = np.zeros(sub_img.shape)
@@ -25,8 +26,25 @@ def DCT_sub(sub_img):
     return dst_sub, img_recor_sub
 
 def DCT(img):
+    if len(img.shape) == 2:
+        H = img.shape[0]
+        W = img.shape[1]
+        h = 8
+        w = 8
+        num_h = int(np.floor(H / h))
+        num_w = int(np.floor(W / w))
 
-    if len(img.shape) == 3:
+        num = 0
+        img_new_dct, img_new_rec = np.zeros((H, W)), np.zeros((H, W))
+        for i in range(num_h):
+            for j in range(num_w):
+                num += 1
+                sub = img[(h * i): (h * (i + 1)), (w * j): (w * (j + 1))]
+                dst_sub, img_recor_sub = DCT_sub(sub)
+                img_new_dct[(h * i): (h * (i + 1)), (w * j): (w * (j + 1))] = dst_sub
+                img_new_rec[(h * i): (h * (i + 1)), (w * j): (w * (j + 1))] = img_recor_sub
+
+    else:
         B, G, R = cv2.split(img)
         H = B.shape[0]
         W = B.shape[1]
@@ -62,24 +80,6 @@ def DCT(img):
         img_new_rec = cv2.merge([img_new_rec_B, img_new_rec_G, img_new_rec_R])
 
 
-    else:
-        H = img.shape[0]
-        W = img.shape[1]
-        h = 8
-        w = 8
-        num_h = int(np.floor(H / h))
-        num_w = int(np.floor(W / w))
-        print('num_h', num_h, 'num_w', num_w)
-        num = 0
-        img_new_dct, img_new_rec = np.zeros((H, W)), np.zeros((H, W))
-        for i in range(num_h):
-            for j in range(num_w):
-                num += 1
-                sub = img[(h * i): (h * (i + 1)), (w * j): (w * (j + 1))]
-                dst_sub, img_recor_sub = DCT_sub(sub)
-                img_new_dct[(h * i): (h * (i + 1)), (w * j): (w * (j + 1))] = dst_sub
-                img_new_rec[(h * i): (h * (i + 1)), (w * j): (w * (j + 1))] = img_recor_sub
-
     return img_new_dct, img_new_rec
 
 
@@ -108,6 +108,9 @@ if __name__ == '__main__':
         print(i, 'processing image: ', img_name)
         file_name = img_name.split('.')[0]
         img = cv2.imread(image_names[i])
+        R, G, B = img[:, :, 0], img[:, :, 1], img[:, :, 2]
+        if operator.eq(R.tolist(), G.tolist()) and operator.eq(G.tolist(), B.tolist()):  ## is gray
+            img = R
         img_new_dct, img_new_rec = DCT(img)
         img_new_dct = img_new_dct.astype(np.uint8)
         img_new_rec = img_new_rec.astype(np.uint8)

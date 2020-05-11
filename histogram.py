@@ -1,6 +1,7 @@
 import numpy as np
 import cv2
 import os
+import operator
 
 def RGB2HSI(rgb_img):
     row = np.shape(rgb_img)[0]
@@ -125,9 +126,15 @@ if __name__ == '__main__':
         print(i, 'processing image: ', img_name)
         file_name = img_name.split('.')[0]
         image = cv2.imread(image_names[i])
-        if len(image.shape) == 3:
+        R, G, B = image[:, :, 0], image[:, :, 1], image[:, :, 2]
+        if operator.eq(R.tolist(), G.tolist()) and operator.eq(G.tolist(), B.tolist()):  ## is gray
+            image = R
+            img_hist = Histogram_gray(image)
+            hist_save_path = save_results_path + '\\' + str(file_name) + '_histogram.jpg'
+            cv2.imwrite(hist_save_path, img_hist)
+        else:
+        # if len(image.shape) == 3:
             hsi_img, img_hist, hsi_img_hist = Histogram_Color(image)
-
             hsi_save_path = save_results_path + '\\' + str(file_name) + '_hsi.jpg'
             hist_save_path = save_results_path + '\\' + str(file_name) + '_histogram.jpg'
             hsi_hist_save_path = save_results_path + '\\' + str(file_name) + '_hsi_histgram.jpg'
@@ -135,10 +142,5 @@ if __name__ == '__main__':
             cv2.imwrite(hsi_save_path, hsi_img)
             cv2.imwrite(hist_save_path, img_hist)
             cv2.imwrite(hsi_hist_save_path, hsi_img_hist)
-
-        else:
-            img_hist = Histogram_gray(image)
-            hist_save_path = save_results_path + '\\' + str(file_name) + '_histogram.jpg'
-            cv2.imwrite(hist_save_path, img_hist)
 
     print('End Histogram Equalization processing.')

@@ -1,6 +1,7 @@
 import numpy as np
 import cv2
 import os
+import operator
 
 def get_power(num, k=0):
     if num <= 2 ** k:
@@ -179,7 +180,6 @@ def image_fft_inverse(img_fft_complex):
     img_fft = image_padding(img_fft_complex)
     img_origin = inverseFFT_2D(img_fft)
     img_ifft = np.real(img_origin)
-
     if len(img_origin.shape) == 2:
         img_ifft = img_ifft[:img_fft_complex.shape[0], :img_fft_complex.shape[1]]
     else:
@@ -211,6 +211,9 @@ if __name__ == '__main__':
         print(i, 'processing image: ', img_name)
         file_name = img_name.split('.')[0]
         img_origin = cv2.imread(image_names[i])
+        R, G, B = img_origin[:, :, 0], img_origin[:, :, 1], img_origin[:, :, 2]
+        if operator.eq(R.tolist(), G.tolist()) and operator.eq(G.tolist(), B.tolist()):  ## is gray
+            img_origin = R
         img_fft_complex, img_fft = image_fft(img_origin)
         img_ifft = image_fft_inverse(img_fft_complex)
 
